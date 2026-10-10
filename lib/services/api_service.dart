@@ -4,12 +4,16 @@ import 'package:http/http.dart' as http;
 import '../models/app_state.dart';
 
 class ApiService {
-  // 10.0.2.2 is Android emulator's alias for host localhost
+  // Production Google Cloud Run backend URL
+  static const String cloudRunBaseUrl = 'https://app-jaga-uang-git-95763364095.asia-southeast2.run.app/api';
+  
+  static String? customBaseUrl;
+
   static String get baseUrl {
-    if (kIsWeb) return 'http://localhost:8080/api';
-    return defaultTargetPlatform == TargetPlatform.android
-        ? 'http://10.0.2.2:8080/api'
-        : 'http://localhost:8080/api';
+    if (customBaseUrl != null && customBaseUrl!.isNotEmpty) {
+      return customBaseUrl!;
+    }
+    return cloudRunBaseUrl;
   }
 
   static Future<Map<String, dynamic>?> fetchRunway() async {
