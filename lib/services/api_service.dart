@@ -8,6 +8,7 @@ class ApiService {
   static const String cloudRunBaseUrl = 'https://app-jaga-uang-git-95763364095.asia-southeast2.run.app/api';
   
   static String? customBaseUrl;
+  static const Duration _timeout = Duration(seconds: 15);
 
   static String get baseUrl {
     if (customBaseUrl != null && customBaseUrl!.isNotEmpty) {
@@ -18,7 +19,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>?> fetchRunway() async {
     try {
-      final res = await http.get(Uri.parse('$baseUrl/runway')).timeout(const Duration(seconds: 4));
+      final res = await http.get(Uri.parse('$baseUrl/runway')).timeout(_timeout);
       if (res.statusCode == 200) {
         return json.decode(res.body) as Map<String, dynamic>;
       }
@@ -30,7 +31,7 @@ class ApiService {
 
   static Future<List<Pocket>?> fetchPockets() async {
     try {
-      final res = await http.get(Uri.parse('$baseUrl/pockets')).timeout(const Duration(seconds: 4));
+      final res = await http.get(Uri.parse('$baseUrl/pockets')).timeout(_timeout);
       if (res.statusCode == 200) {
         final List list = json.decode(res.body);
         return list.map((item) => Pocket(
@@ -50,7 +51,7 @@ class ApiService {
 
   static Future<List<Obligation>?> fetchObligations() async {
     try {
-      final res = await http.get(Uri.parse('$baseUrl/obligations')).timeout(const Duration(seconds: 4));
+      final res = await http.get(Uri.parse('$baseUrl/obligations')).timeout(_timeout);
       if (res.statusCode == 200) {
         final List list = json.decode(res.body);
         return list.map((item) => Obligation(
@@ -70,7 +71,7 @@ class ApiService {
 
   static Future<bool> toggleObligation(String id) async {
     try {
-      final res = await http.post(Uri.parse('$baseUrl/obligations/$id/toggle')).timeout(const Duration(seconds: 4));
+      final res = await http.post(Uri.parse('$baseUrl/obligations/$id/toggle')).timeout(_timeout);
       return res.statusCode == 200;
     } catch (e) {
       debugPrint('ApiService toggleObligation error: $e');
@@ -85,7 +86,7 @@ class ApiService {
       if (search != null && search.isNotEmpty) queryParams['search'] = search;
 
       final uri = Uri.parse('$baseUrl/transactions').replace(queryParameters: queryParams.isEmpty ? null : queryParams);
-      final res = await http.get(uri).timeout(const Duration(seconds: 4));
+      final res = await http.get(uri).timeout(_timeout);
       if (res.statusCode == 200) {
         final List list = json.decode(res.body);
         return list.map((item) => TransactionItem(
@@ -123,7 +124,7 @@ class ApiService {
           'amount': amount,
           'type': type,
         }),
-      ).timeout(const Duration(seconds: 4));
+      ).timeout(_timeout);
 
       if (res.statusCode == 201) {
         final item = json.decode(res.body);
@@ -150,7 +151,7 @@ class ApiService {
         Uri.parse('$baseUrl/transactions/parse-ai'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'text': text}),
-      ).timeout(const Duration(seconds: 4));
+      ).timeout(_timeout);
 
       if (res.statusCode == 200) {
         return json.decode(res.body) as Map<String, dynamic>;
@@ -167,7 +168,7 @@ class ApiService {
         Uri.parse('$baseUrl/runway/scenario'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'targetAmount': target}),
-      ).timeout(const Duration(seconds: 4));
+      ).timeout(_timeout);
       return res.statusCode == 200;
     } catch (e) {
       debugPrint('ApiService setDailyTarget error: $e');
@@ -189,7 +190,7 @@ class ApiService {
           'actualBalance': actualBalance,
           'reason': reason,
         }),
-      ).timeout(const Duration(seconds: 4));
+      ).timeout(_timeout);
       return res.statusCode == 200;
     } catch (e) {
       debugPrint('ApiService reconcile error: $e');
