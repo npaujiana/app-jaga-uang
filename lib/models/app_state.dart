@@ -193,13 +193,16 @@ class AppState extends ChangeNotifier {
 
   // 9Router & AI Configuration
   String aiEndpoint = 'https://9router.npaujiana.tech/v1';
-  String aiApiKey = '';
-  String aiSelectedModel = 'gemini-2.0-flash';
+  String aiApiKey = 'sk-00ffe5fd244dbeca-jl72jn-4327b226';
+  String aiSelectedModel = 'ag/gemini-3.8-flash';
   List<String> aiAvailableModels = [
-    'gemini-2.0-flash',
-    'gemini-1.5-flash',
-    'gpt-4o-mini',
-    'claude-3-5-sonnet',
+    'ag/gemini-3.8-flash',
+    'ag/gemini-3.7-flash',
+    'ag/gemini-3-flash',
+    'ag/claude-sonnet-4-6',
+    'cbai/deepseek-v4.1-flash',
+    'kr/claude-sonnet-4.5',
+    'kr/deepseek-3.2',
   ];
   bool isAiLoadingModels = false;
   String? aiLastRefreshStatus;

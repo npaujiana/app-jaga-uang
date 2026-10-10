@@ -304,6 +304,7 @@ class ApiService {
             }
           ],
           'temperature': 0.1,
+          'stream': false,
         }),
       ).timeout(_timeout);
 

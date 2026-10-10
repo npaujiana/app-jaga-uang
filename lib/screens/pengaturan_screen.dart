@@ -699,14 +699,18 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
                                 : AppColors.outlineVariant,
                           ),
                         ),
-                        child: Text(
-                          widget.state.aiSelectedModel,
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: widget.state.aiAvailableModels.isNotEmpty
-                                ? AppColors.secondary
-                                : AppColors.onSurfaceVariant,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 160),
+                          child: Text(
+                            widget.state.aiSelectedModel,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: widget.state.aiAvailableModels.isNotEmpty
+                                  ? AppColors.secondary
+                                  : AppColors.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       ),

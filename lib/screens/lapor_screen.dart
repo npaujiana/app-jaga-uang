@@ -257,98 +257,162 @@ class _LaporScreenState extends State<LaporScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          const Text('⚡', style: TextStyle(fontSize: 14)),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Lapor Cepat Bahasa Alami',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primary,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Text('⚡', style: TextStyle(fontSize: 14)),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                'Lapor Cepat AI',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primary,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       InkWell(
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
+                            isScrollControlled: true,
                             backgroundColor: AppColors.surfaceContainerLowest,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                             ),
-                            builder: (ctx) => StatefulBuilder(
-                              builder: (ctx, setSheetState) => Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Pilih Model AI (9Router)',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w800,
-                                          ),
+                            builder: (ctx) {
+                              String searchFilter = '';
+                              return StatefulBuilder(
+                                builder: (ctx, setSheetState) {
+                                  final filteredModels = widget.state.aiAvailableModels
+                                      .where((m) => m.toLowerCase().contains(searchFilter.toLowerCase()))
+                                      .toList();
+                                  return SafeArea(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 16,
+                                        right: 16,
+                                        top: 16,
+                                        bottom: MediaQuery.of(ctx).viewInsets.bottom + 16,
+                                      ),
+                                      child: SizedBox(
+                                        height: MediaQuery.of(ctx).size.height * 0.65,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Pilih Model AI (${widget.state.aiAvailableModels.length} Model)',
+                                                  style: GoogleFonts.plusJakartaSans(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: widget.state.isAiLoadingModels
+                                                      ? const SizedBox(
+                                                          width: 16,
+                                                          height: 16,
+                                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                                        )
+                                                      : const Icon(Icons.refresh, size: 20),
+                                                  tooltip: 'Refresh Model Terbaru',
+                                                  onPressed: () async {
+                                                    setSheetState(() {});
+                                                    await widget.state.refreshAiModels();
+                                                    setSheetState(() {});
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                hintText: 'Cari model (misal: gemini, claude, deepseek)...',
+                                                hintStyle: GoogleFonts.plusJakartaSans(fontSize: 12),
+                                                prefixIcon: const Icon(Icons.search, size: 18),
+                                                isDense: true,
+                                                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                                filled: true,
+                                                fillColor: AppColors.surfaceContainerLow,
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderSide: BorderSide.none,
+                                                ),
+                                              ),
+                                              style: GoogleFonts.jetBrainsMono(fontSize: 12),
+                                              onChanged: (val) {
+                                                setSheetState(() {
+                                                  searchFilter = val;
+                                                });
+                                              },
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Expanded(
+                                              child: filteredModels.isEmpty
+                                                  ? Center(
+                                                      child: Text(
+                                                        'Tidak ada model yang cocok',
+                                                        style: GoogleFonts.plusJakartaSans(
+                                                          fontSize: 12,
+                                                          color: AppColors.onSurfaceVariant,
+                                                        ),
+                                                      )
+                                                    )
+                                                  : ListView.builder(
+                                                      itemCount: filteredModels.length,
+                                                      itemBuilder: (context, idx) {
+                                                        final m = filteredModels[idx];
+                                                        final isSelected = widget.state.aiSelectedModel == m;
+                                                        return ListTile(
+                                                          dense: true,
+                                                          contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                                                          title: Text(
+                                                            m,
+                                                            style: GoogleFonts.jetBrainsMono(
+                                                              fontSize: 12,
+                                                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                                              color: isSelected ? AppColors.primary : AppColors.onSurface,
+                                                            ),
+                                                          ),
+                                                          trailing: isSelected
+                                                              ? const Icon(Icons.check_circle, color: AppColors.primary, size: 18)
+                                                              : null,
+                                                          onTap: () {
+                                                            widget.state.updateAiConfig(selectedModel: m);
+                                                            Navigator.pop(ctx);
+                                                            setState(() {});
+                                                          },
+                                                        );
+                                                      },
+                                                    ),
+                                            ),
+                                            const Divider(),
+                                            TextButton.icon(
+                                              icon: const Icon(Icons.settings, size: 16),
+                                              label: const Text('Buka Pengaturan Router & API Key'),
+                                              onPressed: () {
+                                                Navigator.pop(ctx);
+                                                widget.onNavigateTab(4);
+                                              },
+                                            ),
+                                          ],
                                         ),
-                                        IconButton(
-                                          icon: widget.state.isAiLoadingModels
-                                              ? const SizedBox(
-                                                  width: 16,
-                                                  height: 16,
-                                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                                )
-                                              : const Icon(Icons.refresh, size: 20),
-                                          onPressed: () async {
-                                            setSheetState(() {});
-                                            await widget.state.refreshAiModels();
-                                            setSheetState(() {});
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                    const SizedBox(height: 12),
-                                    ...widget.state.aiAvailableModels.map((m) {
-                                      final isSelected = widget.state.aiSelectedModel == m;
-                                      return ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: Text(
-                                          m,
-                                          style: GoogleFonts.jetBrainsMono(
-                                            fontSize: 13,
-                                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                            color: isSelected ? AppColors.primary : AppColors.onSurface,
-                                          ),
-                                        ),
-                                        trailing: isSelected
-                                            ? const Icon(Icons.check_circle, color: AppColors.primary, size: 20)
-                                            : null,
-                                        onTap: () {
-                                          widget.state.updateAiConfig(selectedModel: m);
-                                          Navigator.pop(ctx);
-                                          setState(() {});
-                                        },
-                                      );
-                                    }),
-                                    const SizedBox(height: 8),
-                                    TextButton.icon(
-                                      icon: const Icon(Icons.settings, size: 16),
-                                      label: const Text('Buka Pengaturan Router & API Key'),
-                                      onPressed: () {
-                                        Navigator.pop(ctx);
-                                        widget.onNavigateTab(4);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                  );
+                                },
+                              );
+                            },
                           );
                         },
                         child: Container(
@@ -363,12 +427,16 @@ class _LaporScreenState extends State<LaporScreen> {
                             children: [
                               const Icon(Icons.bolt, size: 12, color: AppColors.secondary),
                               const SizedBox(width: 4),
-                              Text(
-                                widget.state.aiSelectedModel,
-                                style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.secondary,
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 140),
+                                child: Text(
+                                  widget.state.aiSelectedModel,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.jetBrainsMono(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.secondary,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 2),

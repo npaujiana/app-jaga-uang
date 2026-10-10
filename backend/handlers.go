@@ -198,7 +198,8 @@ func (s *Server) handleParseAI(w http.ResponseWriter, r *http.Request) {
 			`Type valid: Pengeluaran, Pemasukan.`
 
 		payload := map[string]any{
-			"model": req.Model,
+			"model":  req.Model,
+			"stream": false,
 			"messages": []map[string]string{
 				{"role": "system", "content": systemPrompt},
 				{"role": "user", "content": req.Text},
