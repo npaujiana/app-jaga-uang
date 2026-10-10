@@ -1,0 +1,47 @@
+[
+  {
+    "id": "2c8246ff5d064ba1bb6b7c1fa7efa4d5",
+    "seq": 1,
+    "device": "MOBILE",
+    "title": "JagaUang - Beranda & Runway",
+    "slug": "1-beranda-runway",
+    "width": 780,
+    "height": 2738
+  },
+  {
+    "id": "dddafec645894930b04306976aafe57f",
+    "seq": 2,
+    "device": "MOBILE",
+    "title": "JagaUang - Lapor Transaksi",
+    "slug": "2-lapor-transaksi",
+    "width": 780,
+    "height": 2354
+  },
+  {
+    "id": "9af89b09d48e4aff8bfa4395e5e7d858",
+    "seq": 3,
+    "device": "MOBILE",
+    "title": "JagaUang - Riwayat & Audit Transaksi",
+    "slug": "3-riwayat-audit-transaksi",
+    "width": 780,
+    "height": 3986
+  },
+  {
+    "id": "76405229f2b044dbb2fd6c602ee07bfa",
+    "seq": 4,
+    "device": "MOBILE",
+    "title": "JagaUang - Planning & Simulasi",
+    "slug": "4-planning-simulasi",
+    "width": 780,
+    "height": 3378
+  },
+  {
+    "id": "e8dca055207c44ca826ab62e3ad47c03",
+    "seq": 5,
+    "device": "MOBILE",
+    "title": "JagaUang - Pengaturan & Rekonsiliasi",
+    "slug": "5-pengaturan-rekonsiliasi",
+    "width": 780,
+    "height": 3570
+  }
+]

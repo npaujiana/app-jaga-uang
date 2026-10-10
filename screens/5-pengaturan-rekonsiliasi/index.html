@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JagaUang - Pengaturan &amp; Rekonsiliasi</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts for Plus Jakarta Sans & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-container": "#7c839b",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f0eee8",
+            "on-background": "#1c1c18",
+            "on-secondary-container": "#00714e",
+            "on-surface": "#1c1c18",
+            "on-primary-fixed-variant": "#3f465c",
+            "on-secondary-fixed-variant": "#005137",
+            "surface-tint": "#565e74",
+            "surface-dim": "#dcdad4",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed": "#85f8c4",
+            "on-error-container": "#93000a",
+            "primary-container": "#131b2e",
+            "surface-container-high": "#ebe8e2",
+            "on-error": "#ffffff",
+            "secondary": "#006c4a",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed-dim": "#ffb77d",
+            "primary-fixed-dim": "#bec6e0",
+            "surface-container-low": "#f6f3ed",
+            "surface-bright": "#fcf9f3",
+            "on-primary-fixed": "#131b2e",
+            "primary-fixed": "#dae2fd",
+            "tertiary-fixed": "#ffdcc3",
+            "on-primary": "#ffffff",
+            "outline-variant": "#c6c6cd",
+            "outline": "#76777d",
+            "surface": "#fcf9f3",
+            "inverse-surface": "#31312d",
+            "surface-container-highest": "#e5e2dc",
+            "on-secondary-fixed": "#002114",
+            "on-tertiary-container": "#c76c00",
+            "on-surface-variant": "#45464d",
+            "secondary-fixed-dim": "#68dba9",
+            "on-tertiary-fixed-variant": "#6e3900",
+            "background": "#fcf9f3",
+            "secondary-container": "#82f5c1",
+            "inverse-primary": "#bec6e0",
+            "tertiary": "#000000",
+            "error": "#ba1a1a",
+            "primary": "#000000",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed": "#2f1500",
+            "surface-variant": "#e5e2dc",
+            "tertiary-container": "#2f1500",
+            "inverse-on-surface": "#f3f0ea"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1rem",
+            "margin": "2rem",
+            "space-lg": "1rem",
+            "space-md": "0.75rem",
+            "space-xl": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "0.75rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "label-badge": ["JetBrains Mono"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "label-caps": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "currency-xl": ["JetBrains Mono"],
+            "currency-md": ["JetBrains Mono"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "currency-sm": ["JetBrains Mono"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-badge": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-xl-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-caps": ["11px", { "lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "currency-xl": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.03em", "fontWeight": "600" }],
+            "currency-md": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "currency-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased min-h-screen pb-24 selection:bg-surface-dim selection:text-on-surface">
+<!-- Top Navigation Bar (Shared Component Anchor) -->
+<header class="sticky top-0 z-40 flex justify-between items-center w-full px-margin-mobile py-space-sm bg-surface-container-lowest border-b border-outline-variant">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center border border-outline-variant text-on-surface">
+<span class="material-symbols-outlined text-[18px]">account_circle</span>
+</div>
+<div>
+<span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">JagaUang</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Notifikasi" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors duration-150 active:scale-[0.98] text-on-surface">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Container -->
+<main class="max-w-[720px] mx-auto px-margin-mobile pt-space-lg space-y-space-lg">
+<!-- Screen Header Title & Subtext -->
+<div class="border-b border-outline-variant pb-space-md">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-caps text-label-caps mb-1">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+<span>SISTEM BUKU KAS</span>
+</div>
+<h1 class="font-headline-xl-mobile text-headline-xl-mobile text-on-surface tracking-tight">Pengaturan &amp; Rekonsiliasi</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Integritas Buku Kas &amp; Audit Data</p>
+</div>
+<!-- Section 1: Rekonsiliasi Saldo Riil -->
+<section class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-on-surface">balance</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Rekonsiliasi Saldo Riil</h2>
+</div>
+<span class="bg-surface-container px-2 py-0.5 rounded font-label-badge text-label-badge text-on-surface-variant border border-outline-variant">AUDIT HARIAN</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-space-md space-y-space-md">
+<div>
+<div class="flex items-center justify-between mb-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Cek &amp; Sesuaikan Saldo</h3>
+<span class="material-symbols-outlined text-outline-variant text-[18px]">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Menyesuaikan saldo aplikasi dengan saldo rekening riil tanpa merusak riwayat transaksi terdahulu.</p>
+</div>
+<div class="h-px bg-outline-variant"></div>
+<!-- Rekening Selector -->
+<div class="space-y-space-xs">
+<label class="block font-label-caps text-label-caps text-on-surface-variant" for="rekening-select">Selector Rekening</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-space-md py-2.5 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-0 appearance-none pr-8" id="rekening-select">
+<option selected="">Bank BRI</option>
+<option>Bank Mandiri</option>
+<option>Bank BCA</option>
+<option>Kas Tunai (Dompet Fisik)</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Metric Ledger Comparison Grid -->
+<div class="grid grid-cols-2 gap-space-sm bg-surface-container-low p-space-sm rounded-lg border border-outline-variant">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">Saldo di Aplikasi</span>
+<span class="font-currency-md text-currency-md text-on-surface block">Rp590.000</span>
+<span class="font-label-badge text-label-badge text-on-surface-variant">Sesuai buku kas</span>
+</div>
+<div class="border-l border-outline-variant pl-space-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">Selisih Terhitung</span>
+<div class="flex items-center gap-1">
+<span class="font-currency-md text-currency-md text-secondary block">+Rp10.000</span>
+<span class="inline-block bg-secondary-container text-on-secondary-container px-1 py-0.2 rounded font-label-badge text-label-badge leading-tight">Surplus</span>
+</div>
+<span class="font-label-badge text-label-badge text-secondary block">Kredit penyeimbang</span>
+</div>
+</div>
+<!-- Input Saldo Nyata -->
+<div class="space-y-space-xs">
+<label class="block font-label-caps text-label-caps text-on-surface-variant" for="input-saldo-nyata">Input Saldo Nyata (Rekening Fisik / Mutasi)</label>
+<div class="relative flex items-center">
+<span class="absolute left-3 font-currency-sm text-currency-sm text-on-surface-variant">Rp</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-9 pr-space-md py-2.5 font-currency-md text-currency-md text-on-surface focus:border-primary focus:ring-0" id="input-saldo-nyata" type="text" value="600.000"/>
+</div>
+</div>
+<!-- Field Alasan Penyesuaian -->
+<div class="space-y-space-xs">
+<label class="block font-label-caps text-label-caps text-on-surface-variant" for="alasan-penyesuaian">Field Alasan Penyesuaian</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-space-md py-2 font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-0" id="alasan-penyesuaian" type="text" value="Koreksi saldo fisik / bunga tabungan"/>
+</div>
+<!-- CTA Button -->
+<button class="w-full min-h-[48px] bg-primary text-on-primary rounded-lg font-headline-sm text-headline-sm flex items-center justify-center gap-space-sm hover:opacity-95 active:scale-[0.98] transition-transform duration-100 ease-out" type="button">
+<span class="material-symbols-outlined text-[18px]">post_add</span>
+<span>Simpan Penyesuaian &amp; Buat Audit Log</span>
+</button>
+</div>
+</section>
+<!-- Section 2: Kelola Rekening & Floor Proteksi -->
+<section class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-on-surface">shield_lock</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Kelola Rekening &amp; Floor Proteksi</h2>
+</div>
+<span class="font-label-badge text-label-badge text-on-surface-variant">2 REKENING TERDAFTAR</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg divide-y divide-outline-variant">
+<!-- Item 1: Bank BRI -->
+<div class="p-space-md space-y-space-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-md bg-surface-container flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-[20px] text-on-surface">account_balance</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Bank BRI</h3>
+<span class="font-label-badge text-label-badge text-on-surface-variant">OPERASIONAL UTAMA</span>
+</div>
+</div>
+<span class="bg-surface-container text-on-surface px-2 py-0.5 rounded font-label-badge text-label-badge border border-outline-variant">AKTIF</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg border border-outline-variant space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Floor Proteksi Saldo:</span>
+<div class="flex items-center gap-1">
+<span class="font-currency-sm text-currency-sm font-semibold bg-surface-container-lowest px-2 py-0.5 border border-outline-variant rounded text-on-surface">Rp 50.000</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Dana di bawah nilai ini tidak dihitung spendable (dicadangkan otomatis).</p>
+</div>
+</div>
+<!-- Item 2: Stockbit -->
+<div class="p-space-md space-y-space-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-md bg-surface-container flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-[20px] text-on-surface">trending_up</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Stockbit</h3>
+<span class="font-label-badge text-label-badge text-on-surface-variant">REKSA DANA &amp; SAHAM</span>
+</div>
+</div>
+<span class="bg-surface-container-highest text-on-surface px-2 py-0.5 rounded font-label-badge text-label-badge border border-outline-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+<span>TERKUNCI</span>
+</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg border border-outline-variant">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Status:</span>
+<span class="font-label-badge text-label-badge text-on-surface font-semibold">Terkunci / Investasi</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Dikecualikan dari operasional dan kalkulasi arus kas harian.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Reset & Buka Saldo Baru -->
+<section class="space-y-space-sm">
+<div class="flex items-center gap-space-xs text-error">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Reset &amp; Buka Saldo Baru</h2>
+</div>
+<div class="bg-surface-container-lowest border border-error-container rounded-lg p-space-md space-y-space-md">
+<div class="flex items-start justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-error">Reset &amp; Perbarui Saldo</h3>
+<span class="font-label-badge text-label-badge text-error block mt-0.5">ZONA AUDIT KHUSUS</span>
+</div>
+<span class="material-symbols-outlined text-error text-[20px]">restart_alt</span>
+</div>
+<div class="bg-error-container/20 border border-error-container p-space-sm rounded-lg">
+<p class="font-body-sm text-body-sm text-on-surface">
+<span class="font-semibold text-error">Notice:</span> Reset akan membekukan saldo lama ke log audit pembukaan baru dan tidak akan dianggap sebagai belanja konsumsi.
+          </p>
+</div>
+<button class="w-full min-h-[48px] bg-surface-container-lowest border border-error text-error hover:bg-error-container/20 rounded-lg font-headline-sm text-headline-sm flex items-center justify-center gap-space-sm transition-colors duration-150 active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[18px]">lock_reset</span>
+<span>Mulai Prosedur Reset Saldo</span>
+</button>
+</div>
+</section>
+<!-- Section 4: Backup, Impor & Data Lokal -->
+<section class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-on-surface">database</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Backup, Impor &amp; Data Lokal</h2>
+</div>
+<span class="font-label-badge text-label-badge text-secondary font-semibold">100% PRIVATE</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-space-md space-y-space-md">
+<div class="flex items-center justify-between pb-space-sm border-b border-outline-variant">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container/50 text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">cloud_off</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Local-First Storage (IndexedDB Aktif)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Buku kas tersimpan di perangkat lokal tanpa server pihak ketiga.</p>
+</div>
+</div>
+</div>
+<!-- Ledger Action Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
+<button class="min-h-[48px] bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-low rounded-lg px-space-sm py-2 font-body-md text-body-md flex items-center justify-center gap-2 active:scale-[0.98] transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Ekspor Data (JSON)</span>
+</button>
+<button class="min-h-[48px] bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-low rounded-lg px-space-sm py-2 font-body-md text-body-md flex items-center justify-center gap-2 active:scale-[0.98] transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">file_upload</span>
+<span>Impor Cadangan JSON</span>
+</button>
+<button class="min-h-[48px] bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-low rounded-lg px-space-sm py-2 font-body-md text-body-md flex items-center justify-center gap-2 active:scale-[0.98] transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span>Ekspor Laporan Bulanan (PDF/Cetak)</span>
+</button>
+</div>
+<div class="bg-surface-container-low p-2 rounded text-center border border-outline-variant">
+<span class="font-label-badge text-label-badge text-on-surface-variant">LOG CHECKSUM: 0x9B4E8... | AUDIT STATUS: TERSINKRON</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Shared Component Anchor) -->
+<!-- Contextual Active: Pengaturan (Matched to Pengaturan & Rekonsiliasi screen) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-14 px-gutter-mobile bg-surface-container-lowest border-t border-outline-variant">
+<!-- Item 1: Beranda -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps mt-0.5">Beranda</span>
+</a>
+<!-- Item 2: Lapor -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="add_circle">add_circle</span>
+<span class="font-label-caps text-label-caps mt-0.5">Lapor</span>
+</a>
+<!-- Item 3: Transaksi -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-caps text-label-caps mt-0.5">Transaksi</span>
+</a>
+<!-- Item 4: Planning -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="pie_chart">pie_chart</span>
+<span class="font-label-caps text-label-caps mt-0.5">Planning</span>
+</a>
+<!-- Item 5: Pengaturan (ACTIVE MAPPING) -->
+<a class="flex flex-col items-center justify-center text-primary font-semibold hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-caps text-label-caps mt-0.5">Pengaturan</span>
+</a>
+</nav>
+</body></html>

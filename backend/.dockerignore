@@ -1,0 +1,5 @@
+*.exe
+data.json
+.git
+.gitignore
+*.log

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JagaUang - Planning &amp; Simulasi</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-container": "#7c839b",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f0eee8",
+            "on-background": "#1c1c18",
+            "on-secondary-container": "#00714e",
+            "on-surface": "#1c1c18",
+            "on-primary-fixed-variant": "#3f465c",
+            "on-secondary-fixed-variant": "#005137",
+            "surface-tint": "#565e74",
+            "surface-dim": "#dcdad4",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed": "#85f8c4",
+            "on-error-container": "#93000a",
+            "primary-container": "#131b2e",
+            "surface-container-high": "#ebe8e2",
+            "on-error": "#ffffff",
+            "secondary": "#006c4a",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed-dim": "#ffb77d",
+            "primary-fixed-dim": "#bec6e0",
+            "surface-container-low": "#f6f3ed",
+            "surface-bright": "#fcf9f3",
+            "on-primary-fixed": "#131b2e",
+            "primary-fixed": "#dae2fd",
+            "tertiary-fixed": "#ffdcc3",
+            "on-primary": "#ffffff",
+            "outline-variant": "#c6c6cd",
+            "outline": "#76777d",
+            "surface": "#fcf9f3",
+            "inverse-surface": "#31312d",
+            "surface-container-highest": "#e5e2dc",
+            "on-secondary-fixed": "#002114",
+            "on-tertiary-container": "#c76c00",
+            "on-surface-variant": "#45464d",
+            "secondary-fixed-dim": "#68dba9",
+            "on-tertiary-fixed-variant": "#6e3900",
+            "background": "#fcf9f3",
+            "secondary-container": "#82f5c1",
+            "inverse-primary": "#bec6e0",
+            "tertiary": "#000000",
+            "error": "#ba1a1a",
+            "primary": "#000000",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed": "#2f1500",
+            "surface-variant": "#e5e2dc",
+            "tertiary-container": "#2f1500",
+            "inverse-on-surface": "#f3f0ea"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1rem",
+            "margin": "2rem",
+            "space-lg": "1rem",
+            "space-md": "0.75rem",
+            "space-xl": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "0.75rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "label-badge": ["JetBrains Mono"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "label-caps": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "currency-xl": ["JetBrains Mono"],
+            "currency-md": ["JetBrains Mono"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "currency-sm": ["JetBrains Mono"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-badge": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-xl-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-caps": ["11px", { "lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "currency-xl": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.03em", "fontWeight": "600" }],
+            "currency-md": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "currency-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col items-center">
+<!-- Mobile Container Wrapper with Archival Ledger Boundary -->
+<div class="w-full max-w-[480px] min-h-screen bg-background flex flex-col relative pb-24 border-x border-outline-variant">
+<!-- Shared TopAppBar -->
+<header class="sticky top-0 z-40 flex justify-between items-center w-full px-margin-mobile py-space-sm bg-surface-container-lowest border-b border-outline-variant">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center border border-outline-variant text-on-surface-variant font-label-caps text-label-caps font-bold">
+          JU
+        </div>
+<div>
+<span class="font-headline-md text-headline-md font-bold text-on-surface block leading-tight">JagaUang</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Notifikasi" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 px-margin-mobile pt-space-md space-y-space-md">
+<!-- Section Title & Subtitle Banner -->
+<section class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-surface-container rounded border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-badge text-label-badge text-on-surface-variant font-medium">RUNWAY AKTIF</span>
+</div>
+<span class="font-label-badge text-label-badge text-on-surface-variant">22 Hari Tersisa</span>
+</div>
+<div>
+<h1 class="font-headline-xl-mobile text-headline-xl-mobile text-on-surface font-bold">Planning &amp; Runway</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Simulasi Proyeksi Akhir Bulan</p>
+</div>
+</section>
+<!-- Calculation Formula Breakdown Card -->
+<section class="bg-surface-container-lowest rounded-lg border border-outline-variant p-3.5 space-y-space-sm">
+<div class="flex items-center justify-between pb-2 border-b border-surface-container">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-on-surface" data-icon="calculate">calculate</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Rumus Kalkulasi Runway Aktif</h2>
+</div>
+<span class="font-label-badge text-label-badge text-on-surface-variant">Ledger #402</span>
+</div>
+<!-- Formula Matrix -->
+<div class="space-y-1.5 pt-1">
+<div class="flex justify-between items-center text-body-sm font-body-sm text-on-surface-variant">
+<span>Spendable Cash</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp1.762.555</span>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="text-outline">−</span> Protected BRI Floor
+            </span>
+<span class="font-currency-sm text-currency-sm text-on-surface-variant">Rp50.000</span>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="text-outline">−</span> Obligasi Belum Dibayar
+            </span>
+<span class="font-currency-sm text-currency-sm text-on-surface-variant">Rp400.000</span>
+</div>
+<div class="pt-2 border-t border-surface-container flex justify-between items-baseline">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Usable Money</span>
+<p class="font-body-sm text-body-sm text-outline text-[11px]">Dana bersih siap dialokasikan</p>
+</div>
+<span class="font-currency-md text-currency-md font-semibold text-secondary">Rp1.312.555</span>
+</div>
+</div>
+<!-- Calculation Bottom Metric Blocks -->
+<div class="grid grid-cols-2 gap-2 pt-2 border-t border-surface-container">
+<div class="p-2 bg-surface-container-low rounded border border-surface-container">
+<span class="font-label-caps text-label-caps text-on-surface-variant block">Sisa Hari</span>
+<span class="font-currency-sm text-currency-sm text-on-surface font-semibold block mt-0.5">22 hari kalender</span>
+<span class="font-label-badge text-label-badge text-outline block text-[10px] mt-0.5">(termasuk hari ini)</span>
+</div>
+<div class="p-2 bg-surface-container-low rounded border border-surface-container">
+<span class="font-label-caps text-label-caps text-on-surface-variant block">Break-Even Max</span>
+<span class="font-currency-sm text-currency-sm text-on-surface font-semibold block mt-0.5">Rp59.661/hari</span>
+<span class="font-label-badge text-label-badge text-secondary block text-[10px] mt-0.5">Batas aman teoretis</span>
+</div>
+</div>
+</section>
+<!-- Section: 4 Skenario Anggaran Harian -->
+<section class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">4 Skenario Anggaran Harian</h2>
+<span class="font-label-badge text-label-badge text-outline">PILIH TARGET</span>
+</div>
+<div class="space-y-2">
+<!-- Card 1 (Active) -->
+<div class="bg-surface-container-lowest rounded-lg border-2 border-primary p-3 space-y-2 relative">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5 mb-1">
+<span class="px-1.5 py-0.5 bg-primary text-on-primary font-label-badge text-label-badge rounded font-medium">AKTIF</span>
+<span class="px-1.5 py-0.5 bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0] font-label-badge text-label-badge rounded">Aman</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Rp15.000 / hari — Ultra Hemat (Aktif)</h3>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Ledger Breakdown -->
+<div class="bg-surface-container-low rounded p-2.5 space-y-1 text-body-sm font-body-sm">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Proyeksi Belanja (22 hari)</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp330.000</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Sisa Kantong Makan</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp267.500</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Dana Terlindungi</span>
+<span class="font-label-badge text-label-badge text-secondary font-medium">Aman tidak tersentuh</span>
+</div>
+<div class="pt-1.5 border-t border-surface-container flex justify-between items-center font-semibold text-on-surface">
+<span>Proyeksi Saldo Akhir</span>
+<span class="font-currency-md text-currency-md text-secondary">Rp982.555</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-3 space-y-2">
+<div class="flex items-start justify-between">
+<div>
+<div class="inline-block px-1.5 py-0.5 bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0] font-label-badge text-label-badge rounded mb-1">
+                  Aman
+                </div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Rp20.000 / hari — Hemat</h3>
+</div>
+<span class="font-currency-sm text-currency-sm text-on-surface-variant">Target 2</span>
+</div>
+<div class="space-y-1 text-body-sm font-body-sm">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Proyeksi Belanja</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp440.000</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Selisih vs Target Aktif</span>
+<span class="font-currency-sm text-currency-sm text-error">−Rp110.000</span>
+</div>
+<div class="pt-1 border-t border-surface-container flex justify-between items-center font-semibold text-on-surface">
+<span>Proyeksi Saldo Akhir</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp872.555</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-3 space-y-2">
+<div class="flex items-start justify-between">
+<div>
+<div class="inline-block px-1.5 py-0.5 bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] font-label-badge text-label-badge rounded mb-1">
+                  Ketat
+                </div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Rp25.000 / hari — Target Wajar</h3>
+</div>
+<span class="font-currency-sm text-currency-sm text-on-surface-variant">Target 3</span>
+</div>
+<div class="space-y-1 text-body-sm font-body-sm">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Proyeksi Belanja</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp550.000</span>
+</div>
+<div class="pt-1 border-t border-surface-container flex justify-between items-center font-semibold text-on-surface">
+<span>Proyeksi Saldo Akhir</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp762.555</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-3 space-y-2">
+<div class="flex items-start justify-between">
+<div>
+<div class="inline-block px-1.5 py-0.5 bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] font-label-badge text-label-badge rounded mb-1">
+                  Rawan mendekati buffer darurat
+                </div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Rp30.000 / hari — Batas Toleransi Maksimal</h3>
+</div>
+<span class="material-symbols-outlined text-[18px] text-error" data-icon="warning">warning</span>
+</div>
+<div class="space-y-1 text-body-sm font-body-sm">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Proyeksi Belanja</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp660.000</span>
+</div>
+<div class="pt-1 border-t border-surface-container flex justify-between items-center font-semibold text-on-surface">
+<span>Proyeksi Saldo Akhir</span>
+<span class="font-currency-sm text-currency-sm text-on-surface">Rp652.555</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Custom Target Input Section -->
+<section class="bg-surface-container-lowest rounded-lg border border-outline-variant p-3.5 space-y-2">
+<label class="block font-headline-sm text-headline-sm text-on-surface font-semibold" for="custom-target">
+          Ubah Target Harian
+        </label>
+<div class="flex gap-2">
+<div class="relative flex-1">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-currency-sm text-currency-sm text-outline">Rp</span>
+<input class="w-full pl-9 pr-3 py-2.5 bg-surface-container-lowest border border-[#D1D5DB] rounded-lg font-currency-md text-currency-md text-on-surface focus:outline-none focus:border-primary transition-colors" id="custom-target" type="text" value="15.000"/>
+</div>
+<button class="px-5 py-2.5 bg-primary text-on-primary font-headline-sm text-headline-sm font-semibold rounded-lg hover:bg-neutral-800 active:scale-[0.98] transition-transform duration-100 flex items-center justify-center">
+            Terapkan
+          </button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Perubahan target akan memperbarui kalkulator simulasi runway secara real-time.
+        </p>
+</section>
+<!-- Obligations / Kewajiban Planning Card -->
+<section class="bg-surface-container-lowest rounded-lg border border-outline-variant p-3.5 space-y-space-sm mb-4">
+<div class="flex items-center justify-between pb-2 border-b border-surface-container">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-on-surface" data-icon="assignment_turned_in">assignment_turned_in</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Kewajiban Planning</h2>
+</div>
+<span class="font-label-badge text-label-badge text-on-surface-variant">Rp400.000 Terikat</span>
+</div>
+<div class="space-y-3">
+<!-- Obligation 1: Gym -->
+<div class="p-2.5 rounded border border-surface-container bg-surface-container-low space-y-1">
+<div class="flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-on-surface">Gym</span>
+<span class="font-currency-sm text-currency-sm font-semibold text-on-surface">Rp150.000</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">100% didanai kantong Gym</span>
+</div>
+</div>
+<!-- Obligation 2: Keluarga -->
+<div class="p-2.5 rounded border border-surface-container bg-surface-container-low space-y-1.5">
+<div class="flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-on-surface">Keluarga</span>
+<span class="font-currency-sm text-currency-sm font-semibold text-on-surface">Rp300.000</span>
+</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant space-y-0.5">
+<div class="flex justify-between">
+<span>• Kantong Keluarga:</span>
+<span class="font-currency-sm text-currency-sm">Rp86.500</span>
+</div>
+<div class="flex justify-between">
+<span>• Kantong Skincare (Subsidiasi):</span>
+<span class="font-currency-sm text-currency-sm">Rp213.500</span>
+</div>
+</div>
+</div>
+<!-- Pocket Status: Skincare -->
+<div class="p-2 bg-surface-container rounded border border-outline-variant flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sisa saldo Skincare setelah komitmen:</span>
+<span class="font-currency-sm text-currency-sm font-semibold text-on-surface">Rp112.300</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Shared BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-14 px-gutter-mobile bg-surface-container-lowest border-t border-outline-variant max-w-[480px] mx-auto right-0">
+<!-- Beranda -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#beranda">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps mt-0.5">Beranda</span>
+</a>
+<!-- Lapor -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#lapor">
+<span class="material-symbols-outlined text-[20px]" data-icon="add_circle">add_circle</span>
+<span class="font-label-caps text-label-caps mt-0.5">Lapor</span>
+</a>
+<!-- Transaksi -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#transaksi">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-caps text-label-caps mt-0.5">Transaksi</span>
+</a>
+<!-- Planning (Active Item) -->
+<a class="flex flex-col items-center justify-center text-primary font-semibold hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#planning">
+<span class="material-symbols-outlined text-[20px]" data-icon="pie_chart" style="font-variation-settings: 'FILL' 1;">pie_chart</span>
+<span class="font-label-caps text-label-caps mt-0.5">Planning</span>
+</a>
+<!-- Pengaturan -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-[0.96]" href="#pengaturan">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps mt-0.5">Pengaturan</span>
+</a>
+</nav>
+</div>
+</body></html>
