@@ -53,8 +53,9 @@ func main() {
 	mux.HandleFunc("GET /api/transactions", srv.handleGetTransactions)
 	mux.HandleFunc("POST /api/transactions", srv.handleCreateTransaction)
 
-	// AI Natural Language Parser
+	// AI Natural Language Parser & 9Router Model Gateway
 	mux.HandleFunc("POST /api/transactions/parse-ai", srv.handleParseAI)
+	mux.HandleFunc("POST /api/ai/models", srv.handleGetAiModels)
 
 	// Reconciliation
 	mux.HandleFunc("POST /api/reconciliation", srv.handleReconcile)

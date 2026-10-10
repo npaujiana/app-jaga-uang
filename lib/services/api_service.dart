@@ -197,4 +197,166 @@ class ApiService {
       return false;
     }
   }
+
+  static Future<AiModelsFetchResult> fetchAiModels({
+    required String endpoint,
+    required String apiKey,
+  }) async {
+    final cleanEndpoint = endpoint.trim().replaceAll(RegExp(r'/+$'), '');
+    try {
+      // First try directly calling the router
+      final uri = Uri.parse('$cleanEndpoint/models');
+      final res = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer ${apiKey.trim()}',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(_timeout);
+
+      if (res.statusCode == 200) {
+        final decoded = json.decode(res.body);
+        if (decoded is Map<String, dynamic> && decoded['data'] is List) {
+          final List list = decoded['data'];
+          final modelIds = list
+              .map((item) => item['id']?.toString() ?? '')
+              .where((id) => id.isNotEmpty)
+              .toList();
+          if (modelIds.isNotEmpty) {
+            return AiModelsFetchResult(models: modelIds, isSuccess: true);
+          }
+        }
+      }
+
+      // If direct call returned non-200, try via Go backend proxy
+      final proxyRes = await http.post(
+        Uri.parse('$baseUrl/ai/models'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'endpoint': cleanEndpoint, 'apiKey': apiKey.trim()}),
+      ).timeout(_timeout);
+
+      if (proxyRes.statusCode == 200) {
+        final decoded = json.decode(proxyRes.body);
+        if (decoded['models'] != null && (decoded['models'] as List).isNotEmpty) {
+          final List list = decoded['models'];
+          return AiModelsFetchResult(
+            models: list.map((e) => e.toString()).toList(),
+            isSuccess: true,
+          );
+        }
+        if (decoded['error'] != null && decoded['error'].toString().isNotEmpty) {
+          return AiModelsFetchResult(
+            models: [],
+            isSuccess: false,
+            errorMessage: decoded['error'].toString(),
+          );
+        }
+      }
+
+      if (res.statusCode != 200) {
+        try {
+          final errBody = json.decode(res.body);
+          final msg = errBody['error']?.toString() ?? 'HTTP ${res.statusCode}';
+          return AiModelsFetchResult(models: [], isSuccess: false, errorMessage: msg);
+        } catch (_) {
+          return AiModelsFetchResult(models: [], isSuccess: false, errorMessage: 'HTTP ${res.statusCode}');
+        }
+      }
+    } catch (e) {
+      debugPrint('ApiService fetchAiModels error: $e');
+      return AiModelsFetchResult(models: [], isSuccess: false, errorMessage: e.toString());
+    }
+    return AiModelsFetchResult(models: [], isSuccess: false, errorMessage: 'Tidak ada model ditemukan');
+  }
+
+  static Future<Map<String, dynamic>?> parseWithRouter({
+    required String endpoint,
+    required String apiKey,
+    required String model,
+    required String text,
+  }) async {
+    final cleanEndpoint = endpoint.trim().replaceAll(RegExp(r'/+$'), '');
+
+    // First try direct router call
+    try {
+      final uri = Uri.parse('$cleanEndpoint/chat/completions');
+      final res = await http.post(
+        uri,
+        headers: {
+          'Authorization': 'Bearer ${apiKey.trim()}',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'model': model,
+          'messages': [
+            {
+              'role': 'system',
+              'content': 'Kamu adalah parser transaksi keuangan aplikasi JagaUang Indonesia. '
+                  'Kembalikan HANYA JSON murni tanpa markdown, tanpa backtick, persis format berikut:\n'
+                  '{"amount": 16000, "description": "Ketoprak siang", "category": "Makanan", "pocketId": "jago_makan", "type": "Pengeluaran"}\n'
+                  'Pilihan category: Makanan, Jajan, Kebutuhan, Transportasi, Keluarga, Gym, Skincare, Lain-lain.\n'
+                  'Pilihan pocketId: jago_makan, jago_skincare, jago_gym, jago_keluarga, cash, bri, stockbit.\n'
+                  'Pilihan type: Pengeluaran, Pemasukan.',
+            },
+            {
+              'role': 'user',
+              'content': text,
+            }
+          ],
+          'temperature': 0.1,
+        }),
+      ).timeout(_timeout);
+
+      if (res.statusCode == 200) {
+        final decoded = json.decode(res.body);
+        final content = decoded['choices']?[0]?['message']?['content']?.toString() ?? '';
+        final cleanContent = content
+            .replaceAll(RegExp(r'^```json\s*', multiLine: true), '')
+            .replaceAll(RegExp(r'^```\s*', multiLine: true), '')
+            .replaceAll('```', '')
+            .trim();
+        final jsonResult = json.decode(cleanContent);
+        if (jsonResult is Map<String, dynamic> && (jsonResult['amount'] as num?) != null) {
+          return jsonResult;
+        }
+      }
+    } catch (e) {
+      debugPrint('ApiService parseWithRouter direct error: $e');
+    }
+
+    // Try Go backend with router payload
+    try {
+      final res = await http.post(
+        Uri.parse('$baseUrl/transactions/parse-ai'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'text': text,
+          'endpoint': cleanEndpoint,
+          'apiKey': apiKey.trim(),
+          'model': model,
+        }),
+      ).timeout(_timeout);
+
+      if (res.statusCode == 200) {
+        return json.decode(res.body) as Map<String, dynamic>;
+      }
+    } catch (e) {
+      debugPrint('ApiService parseWithRouter proxy error: $e');
+    }
+
+    // Final fallback: standard Go parseAi
+    return parseAi(text);
+  }
+}
+
+class AiModelsFetchResult {
+  final List<String> models;
+  final bool isSuccess;
+  final String? errorMessage;
+
+  AiModelsFetchResult({
+    required this.models,
+    required this.isSuccess,
+    this.errorMessage,
+  });
 }

@@ -23,11 +23,23 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
   final TextEditingController _reasonController = TextEditingController(
     text: 'Koreksi saldo fisik / bunga tabungan',
   );
+  late TextEditingController _aiEndpointController;
+  late TextEditingController _aiApiKeyController;
+  bool _obscureApiKey = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _aiEndpointController = TextEditingController(text: widget.state.aiEndpoint);
+    _aiApiKeyController = TextEditingController(text: widget.state.aiApiKey);
+  }
 
   @override
   void dispose() {
     _actualBalanceController.dispose();
     _reasonController.dispose();
+    _aiEndpointController.dispose();
+    _aiApiKeyController.dispose();
     super.dispose();
   }
 
@@ -630,6 +642,272 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+
+            // Section 3: AI & 9Router Gateway Configuration
+            Row(
+              children: [
+                const Icon(Icons.psychology, size: 18, color: AppColors.primary),
+                const SizedBox(width: 6),
+                Text(
+                  'INTEGRASI AI & 9ROUTER',
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.outlineVariant),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Text('🤖', style: TextStyle(fontSize: 14)),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Router AI Gateway',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: widget.state.aiAvailableModels.isNotEmpty
+                              ? AppColors.secondary.withValues(alpha: 0.12)
+                              : AppColors.surfaceContainer,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: widget.state.aiAvailableModels.isNotEmpty
+                                ? AppColors.secondary
+                                : AppColors.outlineVariant,
+                          ),
+                        ),
+                        child: Text(
+                          widget.state.aiSelectedModel,
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: widget.state.aiAvailableModels.isNotEmpty
+                                ? AppColors.secondary
+                                : AppColors.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // Endpoint Input
+                  Text(
+                    'Router Endpoint URL',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: _aiEndpointController,
+                    style: GoogleFonts.jetBrainsMono(fontSize: 12),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.surfaceContainerLow,
+                      hintText: 'https://9router.npaujiana.tech/v1',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    ),
+                    onChanged: (val) => widget.state.updateAiConfig(endpoint: val),
+                  ),
+                  const SizedBox(height: 10),
+                  // API Key Input
+                  Text(
+                    'API Key / Token (Bearer)',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: _aiApiKeyController,
+                    obscureText: _obscureApiKey,
+                    style: GoogleFonts.jetBrainsMono(fontSize: 12),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.surfaceContainerLow,
+                      hintText: 'Masukkan API Key 9Router Anda...',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureApiKey ? Icons.visibility_off : Icons.visibility,
+                          size: 18,
+                        ),
+                        onPressed: () => setState(() => _obscureApiKey = !_obscureApiKey),
+                      ),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    ),
+                    onChanged: (val) => widget.state.updateAiConfig(apiKey: val),
+                  ),
+                  const SizedBox(height: 12),
+                  // Model Selector Dropdown & Refresh Button
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pilih Model Aktif',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceContainerLow,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppColors.outlineVariant),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  value: widget.state.aiAvailableModels.contains(widget.state.aiSelectedModel)
+                                      ? widget.state.aiSelectedModel
+                                      : (widget.state.aiAvailableModels.isNotEmpty
+                                          ? widget.state.aiAvailableModels.first
+                                          : null),
+                                  items: widget.state.aiAvailableModels.map((m) {
+                                    return DropdownMenuItem<String>(
+                                      value: m,
+                                      child: Text(
+                                        m,
+                                        style: GoogleFonts.jetBrainsMono(fontSize: 12),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    if (val != null) {
+                                      widget.state.updateAiConfig(selectedModel: val);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 18),
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.onPrimary,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          ),
+                          onPressed: widget.state.isAiLoadingModels
+                              ? null
+                              : () async {
+                                  final messenger = ScaffoldMessenger.of(context);
+                                  final res = await widget.state.refreshAiModels();
+                                  if (!mounted) return;
+                                  messenger.showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        res.isSuccess
+                                            ? '✅ Berhasil memuat ${res.models.length} model dari 9Router!'
+                                            : '⚠️ ${res.errorMessage ?? "Gagal memuat model"}',
+                                      ),
+                                      backgroundColor: res.isSuccess ? AppColors.secondary : Colors.orange[800],
+                                      duration: const Duration(seconds: 3),
+                                    ),
+                                  );
+                                },
+                          icon: widget.state.isAiLoadingModels
+                              ? const SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                )
+                              : const Icon(Icons.refresh, size: 16),
+                          label: Text(
+                            widget.state.isAiLoadingModels ? 'Memuat...' : 'Refresh',
+                            style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (widget.state.aiLastRefreshStatus != null) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: widget.state.aiLastRefreshStatus!.startsWith('Berhasil')
+                            ? AppColors.secondary.withValues(alpha: 0.08)
+                            : Colors.orange.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: widget.state.aiLastRefreshStatus!.startsWith('Berhasil')
+                              ? AppColors.secondary.withValues(alpha: 0.3)
+                              : Colors.orange.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            widget.state.aiLastRefreshStatus!.startsWith('Berhasil')
+                                ? Icons.check_circle_outline
+                                : Icons.info_outline,
+                            size: 14,
+                            color: widget.state.aiLastRefreshStatus!.startsWith('Berhasil')
+                                ? AppColors.secondary
+                                : Colors.orange[800],
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              widget.state.aiLastRefreshStatus!,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11,
+                                color: widget.state.aiLastRefreshStatus!.startsWith('Berhasil')
+                                    ? AppColors.secondary
+                                    : Colors.orange[800],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
           ],
         ),
       ),

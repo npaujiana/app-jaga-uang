@@ -58,7 +58,20 @@ type RunwaySummary struct {
 }
 
 type ParseAiRequest struct {
-	Text string `json:"text"`
+	Text     string `json:"text"`
+	Endpoint string `json:"endpoint,omitempty"`
+	ApiKey   string `json:"apiKey,omitempty"`
+	Model    string `json:"model,omitempty"`
+}
+
+type AiModelsRequest struct {
+	Endpoint string `json:"endpoint"`
+	ApiKey   string `json:"apiKey"`
+}
+
+type AiModelsResponse struct {
+	Models []string `json:"models"`
+	Error  string   `json:"error,omitempty"`
 }
 
 type ParseAiResponse struct {

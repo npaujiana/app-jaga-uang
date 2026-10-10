@@ -191,6 +191,19 @@ class AppState extends ChangeNotifier {
   int daysRemaining = 22;
   double protectedFloorBRI = 50000;
 
+  // 9Router & AI Configuration
+  String aiEndpoint = 'https://9router.npaujiana.tech/v1';
+  String aiApiKey = '';
+  String aiSelectedModel = 'gemini-2.0-flash';
+  List<String> aiAvailableModels = [
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gpt-4o-mini',
+    'claude-3-5-sonnet',
+  ];
+  bool isAiLoadingModels = false;
+  String? aiLastRefreshStatus;
+
   // Transactions History
   final List<TransactionItem> transactions = [
     TransactionItem(
@@ -424,5 +437,40 @@ class AppState extends ChangeNotifier {
       actualBalance: actualBalance,
       reason: reason,
     );
+  }
+
+  void updateAiConfig({
+    String? endpoint,
+    String? apiKey,
+    String? selectedModel,
+  }) {
+    if (endpoint != null) aiEndpoint = endpoint.trim();
+    if (apiKey != null) aiApiKey = apiKey.trim();
+    if (selectedModel != null) aiSelectedModel = selectedModel.trim();
+    notifyListeners();
+  }
+
+  Future<AiModelsFetchResult> refreshAiModels() async {
+    isAiLoadingModels = true;
+    aiLastRefreshStatus = null;
+    notifyListeners();
+
+    final result = await ApiService.fetchAiModels(
+      endpoint: aiEndpoint,
+      apiKey: aiApiKey,
+    );
+
+    isAiLoadingModels = false;
+    if (result.isSuccess && result.models.isNotEmpty) {
+      aiAvailableModels = result.models;
+      if (!aiAvailableModels.contains(aiSelectedModel)) {
+        aiSelectedModel = aiAvailableModels.first;
+      }
+      aiLastRefreshStatus = 'Berhasil memuat ${result.models.length} model!';
+    } else {
+      aiLastRefreshStatus = result.errorMessage ?? 'Gagal memuat model';
+    }
+    notifyListeners();
+    return result;
   }
 }

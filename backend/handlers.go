@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
+	"time"
 )
 
 // ponytail: thin standard library HTTP handlers returning JSON directly
@@ -112,6 +116,68 @@ func (s *Server) handleCreateTransaction(w http.ResponseWriter, r *http.Request)
 	s.writeJSON(w, http.StatusCreated, tx)
 }
 
+func (s *Server) handleGetAiModels(w http.ResponseWriter, r *http.Request) {
+	var req AiModelsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		s.writeError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	endpoint := strings.TrimRight(strings.TrimSpace(req.Endpoint), "/")
+	if endpoint == "" {
+		endpoint = "https://9router.npaujiana.tech/v1"
+	}
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	modelsReq, err := http.NewRequest(http.MethodGet, endpoint+"/models", nil)
+	if err != nil {
+		s.writeJSON(w, http.StatusOK, AiModelsResponse{Error: err.Error()})
+		return
+	}
+
+	if req.ApiKey != "" {
+		modelsReq.Header.Set("Authorization", "Bearer "+req.ApiKey)
+	}
+	modelsReq.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(modelsReq)
+	if err != nil {
+		s.writeJSON(w, http.StatusOK, AiModelsResponse{Error: err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		var errResp map[string]any
+		_ = json.NewDecoder(resp.Body).Decode(&errResp)
+		msg := fmt.Sprintf("HTTP %d", resp.StatusCode)
+		if e, ok := errResp["error"]; ok {
+			msg = fmt.Sprintf("HTTP %d: %v", resp.StatusCode, e)
+		}
+		s.writeJSON(w, http.StatusOK, AiModelsResponse{Error: msg})
+		return
+	}
+
+	var data struct {
+		Data []struct {
+			ID string `json:"id"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		s.writeJSON(w, http.StatusOK, AiModelsResponse{Error: err.Error()})
+		return
+	}
+
+	var modelList []string
+	for _, m := range data.Data {
+		if m.ID != "" {
+			modelList = append(modelList, m.ID)
+		}
+	}
+
+	s.writeJSON(w, http.StatusOK, AiModelsResponse{Models: modelList})
+}
+
 func (s *Server) handleParseAI(w http.ResponseWriter, r *http.Request) {
 	var req ParseAiRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -119,6 +185,64 @@ func (s *Server) handleParseAI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Try remote LLM if endpoint, apiKey, and model are provided
+	if req.Endpoint != "" && req.ApiKey != "" && req.Model != "" {
+		endpoint := strings.TrimRight(strings.TrimSpace(req.Endpoint), "/")
+		client := &http.Client{Timeout: 12 * time.Second}
+
+		systemPrompt := `Kamu adalah parser transaksi keuangan aplikasi JagaUang Indonesia. ` +
+			`Kembalikan HANYA JSON murni tanpa markdown, tanpa backtick, persis format berikut: ` +
+			`{"amount": 16000, "description": "Ketoprak siang", "category": "Makanan", "pocketId": "jago_makan", "type": "Pengeluaran"}` +
+			`Kategori valid: Makanan, Jajan, Kebutuhan, Transportasi, Keluarga, Gym, Skincare, Lain-lain.` +
+			`PocketID valid: jago_makan, jago_skincare, jago_gym, jago_keluarga, cash, bri, stockbit.` +
+			`Type valid: Pengeluaran, Pemasukan.`
+
+		payload := map[string]any{
+			"model": req.Model,
+			"messages": []map[string]string{
+				{"role": "system", "content": systemPrompt},
+				{"role": "user", "content": req.Text},
+			},
+			"temperature": 0.1,
+		}
+
+		payloadBytes, _ := json.Marshal(payload)
+		chatReq, err := http.NewRequest(http.MethodPost, endpoint+"/chat/completions", bytes.NewReader(payloadBytes))
+		if err == nil {
+			chatReq.Header.Set("Authorization", "Bearer "+req.ApiKey)
+			chatReq.Header.Set("Content-Type", "application/json")
+
+			resp, err := client.Do(chatReq)
+			if err == nil && resp.StatusCode == http.StatusOK {
+				defer resp.Body.Close()
+				var chatResp struct {
+					Choices []struct {
+						Message struct {
+							Content string `json:"content"`
+						} `json:"message"`
+					} `json:"choices"`
+				}
+				if json.NewDecoder(resp.Body).Decode(&chatResp) == nil && len(chatResp.Choices) > 0 {
+					rawContent := strings.TrimSpace(chatResp.Choices[0].Message.Content)
+					rawContent = strings.TrimPrefix(rawContent, "```json")
+					rawContent = strings.TrimPrefix(rawContent, "```")
+					rawContent = strings.TrimSuffix(rawContent, "```")
+					rawContent = strings.TrimSpace(rawContent)
+
+					var aiResult ParseAiResponse
+					if json.Unmarshal([]byte(rawContent), &aiResult) == nil && aiResult.Amount > 0 {
+						if aiResult.Description == "" {
+							aiResult.Description = req.Text
+						}
+						s.writeJSON(w, http.StatusOK, aiResult)
+						return
+					}
+				}
+			}
+		}
+	}
+
+	// Graceful fallback to built-in rule-based NLP parser
 	parsed := ParseNaturalLanguage(req.Text)
 	s.writeJSON(w, http.StatusOK, parsed)
 }

@@ -59,7 +59,15 @@ class _LaporScreenState extends State<LaporScreen> {
 
   Future<void> _parseAiInput() async {
     final rawText = _aiController.text.trim();
-    final res = await ApiService.parseAi(rawText);
+    if (rawText.isEmpty) return;
+
+    final res = await ApiService.parseWithRouter(
+      endpoint: widget.state.aiEndpoint,
+      apiKey: widget.state.aiApiKey,
+      model: widget.state.aiSelectedModel,
+      text: rawText,
+    );
+
     if (res != null) {
       setState(() {
         _amountController.text = (res['amount'] as num).toInt().toString();
@@ -70,9 +78,10 @@ class _LaporScreenState extends State<LaporScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✨ Draf transaksi diuraikan oleh AI Parser (Go Backend)!'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text('✨ Draf transaksi diuraikan oleh ${widget.state.aiSelectedModel}!'),
+            backgroundColor: AppColors.secondary,
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -262,19 +271,109 @@ class _LaporScreenState extends State<LaporScreen> {
                           ),
                         ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: AppColors.outlineVariant),
-                        ),
-                        child: Text(
-                          'AI PARSER v2.1',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.onSurfaceVariant,
+                      InkWell(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            backgroundColor: AppColors.surfaceContainerLowest,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                            ),
+                            builder: (ctx) => StatefulBuilder(
+                              builder: (ctx, setSheetState) => Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Pilih Model AI (9Router)',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: widget.state.isAiLoadingModels
+                                              ? const SizedBox(
+                                                  width: 16,
+                                                  height: 16,
+                                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                                )
+                                              : const Icon(Icons.refresh, size: 20),
+                                          onPressed: () async {
+                                            setSheetState(() {});
+                                            await widget.state.refreshAiModels();
+                                            setSheetState(() {});
+                                            setState(() {});
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ...widget.state.aiAvailableModels.map((m) {
+                                      final isSelected = widget.state.aiSelectedModel == m;
+                                      return ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        title: Text(
+                                          m,
+                                          style: GoogleFonts.jetBrainsMono(
+                                            fontSize: 13,
+                                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                            color: isSelected ? AppColors.primary : AppColors.onSurface,
+                                          ),
+                                        ),
+                                        trailing: isSelected
+                                            ? const Icon(Icons.check_circle, color: AppColors.primary, size: 20)
+                                            : null,
+                                        onTap: () {
+                                          widget.state.updateAiConfig(selectedModel: m);
+                                          Navigator.pop(ctx);
+                                          setState(() {});
+                                        },
+                                      );
+                                    }),
+                                    const SizedBox(height: 8),
+                                    TextButton.icon(
+                                      icon: const Icon(Icons.settings, size: 16),
+                                      label: const Text('Buka Pengaturan Router & API Key'),
+                                      onPressed: () {
+                                        Navigator.pop(ctx);
+                                        widget.onNavigateTab(4);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondary.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: AppColors.secondary.withValues(alpha: 0.4)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.bolt, size: 12, color: AppColors.secondary),
+                              const SizedBox(width: 4),
+                              Text(
+                                widget.state.aiSelectedModel,
+                                style: GoogleFonts.jetBrainsMono(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.secondary,
+                                ),
+                              ),
+                              const SizedBox(width: 2),
+                              const Icon(Icons.arrow_drop_down, size: 14, color: AppColors.secondary),
+                            ],
                           ),
                         ),
                       ),
